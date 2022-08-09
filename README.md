@@ -8,10 +8,10 @@ coming soon...
 
 ## Running from source
 
-1. clone `https://github.com/FlafyDev/epub_reader` somewhere.
-2. clone `https://github.com/FlafyDev/epub-renderer` somewhere.
-3. in `epub-renderer` do `yarn build --outDir ..../epub_reader/assets`.
-4. in `epub_reader` do `flutter pub get && flutter run`.
+1. Clone `https://github.com/FlafyDev/epub_reader` somewhere.
+2. Clone `https://github.com/FlafyDev/epub-renderer` somewhere.
+3. In `epub-renderer` do `yarn build --outDir ..../epub_reader/assets`.
+4. In `epub_reader` do `flutter pub get && flutter run`.
 
 ## What about other platforms?
 
