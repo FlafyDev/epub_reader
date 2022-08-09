@@ -261,7 +261,7 @@ class _HomeSettingsState extends State<HomeSettings> {
                           params: SaveFileDialogParams(
                             fileName: "book-reader-data.zip",
                             mimeTypesFilter: ["application/zip"],
-                            data: await File(tempZipPath).readAsBytes(),
+                            sourceFilePath: tempZipPath,
                           ),
                         );
                       },
