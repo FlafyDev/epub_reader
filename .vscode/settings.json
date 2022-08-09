@@ -1,0 +1,19 @@
+{
+  "cSpell.words": [
+    "ARGB",
+    "Epub",
+    "epubz",
+    "inappwebview",
+    "lerp",
+    "LTRB",
+    "LTWH",
+    "mlkit",
+    "scrollbars",
+    "sublist",
+    "unfocus",
+    "vsync"
+  ],
+  "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix",
+  "editor.hover.enabled": true,
+  "cSpell.enabled": true
+}

@@ -1,0 +1,65 @@
+name: epub_reader
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.14.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  after_layout: ^1.1.0
+  collection: ^1.15.0
+  # epubz:
+  #   path: /mnt/general/repos/flafydev/dart-epubz
+  epubz:
+    git:
+      url: https://github.com/FlafyDev/dart-epubz.git
+      ref: dev
+  http: ^0.13.4
+  palette_generator: ^0.3.3
+  scroll_snap_list: ^0.8.6
+  googleapis: ^9.1.0
+  responsive_grid_list: ^1.2.4
+  html: ^0.15.0
+  path: ^1.8.0
+  path_provider: ^2.0.11
+  uuid: ^3.0.6
+  permission_handler: ^9.2.0
+  separated_column: ^2.0.0
+  google_mlkit_translation: ^0.3.0
+  mime: ^1.0.2
+  url_launcher: ^6.1.5
+  flutter_html: ^3.0.0-alpha.5
+  flutter_inappwebview: ^5.4.3+7
+  flutter_markdown: ^0.6.10
+  bottom_inset_observer: ^3.0.1
+  scrollable_positioned_list: ^0.2.3
+  flutter_rating_bar: ^4.0.1
+  equatable: ^2.0.3
+  stack: ^0.2.1
+  file_picker: ^4.6.1
+  flutter_phoenix: ^1.0.0
+  archive: ^3.3.1
+  flutter_file_dialog: ^2.3.0
+  font_awesome_flutter: ^10.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/index.html
+    - assets/images/cover.png
+    - assets/fonts/variable/Literata.ttf
+    - assets/fonts/variable/RobotoMono.ttf
+    - assets/fonts/variable/Merriweather.ttf
