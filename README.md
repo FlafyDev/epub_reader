@@ -17,9 +17,9 @@ coming soon...
 
 - IOS: I don't have a device to test it on.
 - Web: Would require a lot of changes and there isn't a stable webview package for web.
-- Windows: Blocked on [#37597](https://github.com/flutter/flutter/issues/37597)
-- MacOS: Blocked on [#41725](https://github.com/flutter/flutter/issues/41725)
-- Linux: Blocked on [#41726](https://github.com/flutter/flutter/issues/41726)
+- Windows: Blocked on [flutter/flutter#37597](https://github.com/flutter/flutter/issues/37597)
+- MacOS: Blocked on [flutter/flutter#41725](https://github.com/flutter/flutter/issues/41725)
+- Linux: Blocked on [flutter/flutter#41726](https://github.com/flutter/flutter/issues/41726)
 
 ## License
 
