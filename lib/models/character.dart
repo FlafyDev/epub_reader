@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 
 class Character {
   final String name;
-  final ImageProvider image;
+  final NetworkImage? image;
   final String? descriptionMarkdown;
 
   Character({
     required this.name,
-    required this.image,
+    this.image,
     required this.descriptionMarkdown,
   });
 
   Map<String, dynamic> toJson() => {
-        "name": name,
-        "image": image.toString(),
-        "descriptionMarkdown": descriptionMarkdown,
+        'name': name,
+        'image': image?.url,
+        'descriptionMarkdown': descriptionMarkdown,
       };
 
   factory Character.fromJson(Map<String, dynamic> json) => Character(
         name: json["name"],
-        image: NetworkImage(json["image"]),
+        image: json["image"] != null ? NetworkImage(json["image"]) : null,
         descriptionMarkdown: json["descriptionMarkdown"],
       );
 }

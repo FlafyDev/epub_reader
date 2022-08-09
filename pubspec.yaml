@@ -15,12 +15,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   after_layout: ^1.1.0
   collection: ^1.15.0
-  # epubz:
-  #   path: /mnt/general/repos/flafydev/dart-epubz
   epubz:
-    git:
-      url: https://github.com/FlafyDev/dart-epubz.git
-      ref: dev
+    path: ../dart-epubz
+  # epubz:
+  #   git:
+  #     url: https://github.com/FlafyDev/dart-epubz.git
+  #     ref: dev
   http: ^0.13.4
   palette_generator: ^0.3.3
   scroll_snap_list: ^0.8.6
@@ -48,6 +48,7 @@ dependencies:
   archive: ^3.3.1
   flutter_file_dialog: ^2.3.0
   font_awesome_flutter: ^10.1.0
+  string_similarity: ^2.0.0
 
 dev_dependencies:
   flutter_test:

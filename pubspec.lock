@@ -102,11 +102,9 @@ packages:
   epubz:
     dependency: "direct main"
     description:
-      path: "."
-      ref: dev
-      resolved-ref: a76a3110694efb589dc7f244847864049bc67743
-      url: "https://github.com/FlafyDev/dart-epubz.git"
-    source: git
+      path: "../dart-epubz"
+      relative: true
+    source: path
     version: "3.0.0"
   equatable:
     dependency: "direct main"
@@ -527,6 +525,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  string_similarity:
+    dependency: "direct main"
+    description:
+      name: string_similarity
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   term_glyph:
     dependency: transitive
     description:

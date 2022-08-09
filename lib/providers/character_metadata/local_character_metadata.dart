@@ -1,5 +1,6 @@
 import 'package:epub_reader/models/character.dart';
 import 'character_metadata.dart';
+import 'package:string_similarity/string_similarity.dart';
 
 class LocalCharacterMetadata extends CharacterMetadata {
   final List<Character> characters;
@@ -16,7 +17,7 @@ class LocalCharacterMetadata extends CharacterMetadata {
   @override
   Future<List<Character>> search(String query) async {
     return characters
-        .where((character) => character.name.contains(query))
-        .toList();
+      ..sort((a, b) =>
+          b.name.similarityTo(query).compareTo(a.name.similarityTo(query)));
   }
 }

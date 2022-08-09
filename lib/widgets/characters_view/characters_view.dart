@@ -72,7 +72,9 @@ class _CharactersViewState extends State<CharactersView> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
                         child: Image(
-                          image: character.image,
+                          image: (character.image ??
+                                  const AssetImage("assets/images/cover.png"))
+                              as ImageProvider,
                           height: 150,
                         ),
                       ),
