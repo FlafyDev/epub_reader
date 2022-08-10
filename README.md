@@ -4,7 +4,7 @@ An open source book reader developed in Flutter for Android ([And eventually oth
 
 ## Preview
 
-coming soon...
+![preview](https://user-images.githubusercontent.com/44374434/183841596-5dccd2d6-6306-4f43-acb9-81592ad1730d.gif)
 
 ## Running from source
 
