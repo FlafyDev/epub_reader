@@ -81,26 +81,13 @@ class _BookDownloaderInterfaceState extends State<BookDownloaderInterface> {
       return null;
     }
 
-    final res = await httpClient.send(Request('GET', uri));
+    final res = await httpClient.get(uri);
 
-    final List<int> bytes = [];
+    if (res.statusCode != 200) {
+      return null;
+    }
 
-    res.stream.listen((value) {
-      setState(() {
-        downloadProgress = res.contentLength == null
-            ? null
-            : ((downloadProgress ?? 0) + value.length / res.contentLength!) / 2;
-      });
-      bytes.addAll(value);
-    })
-      ..onDone(() async {
-        completer.complete(bytes);
-      })
-      ..onError((error) {
-        completer.complete(null);
-      });
-
-    return completer.future;
+    return res.bodyBytes;
   }
 
   Future<void> begin() async {
