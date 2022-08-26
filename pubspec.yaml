@@ -16,11 +16,10 @@ dependencies:
   after_layout: ^1.1.0
   collection: ^1.15.0
   epubz:
-    path: ../dart-epubz
-  # epubz:
-  #   git:
-  #     url: https://github.com/FlafyDev/dart-epubz.git
-  #     ref: dev
+  #  path: ../dart-epubz
+    git:
+      url: https://github.com/FlafyDev/dart-epubz.git
+      ref: dev
   http: ^0.13.4
   palette_generator: ^0.3.3
   scroll_snap_list: ^0.8.6
