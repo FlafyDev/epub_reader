@@ -11,6 +11,9 @@
     in {
       devShell = pkgs.mkShell {
         nativeBuildInputs = [ pkgs.bashInteractive ];
+        shellHook = ''
+          export PATH="$PATH:${pkgs.flutter}/bin/cache/dart-sdk/bin"
+        '';
         buildInputs = with pkgs; [
           flutter
           jdk11
