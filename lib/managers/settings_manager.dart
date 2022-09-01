@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:epub_reader/utils/enum_from_index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 import 'package:path/path.dart' as p;
@@ -40,11 +41,14 @@ class ConfigData {
 
   factory ConfigData.fromJson(Map<String, dynamic> json) {
     return ConfigData(
-      sortType: SortType.values[json['sortType']],
-      viewType: ViewType.values[json['viewType']],
-      bookMetadata: BookMetadataEnum.values[json['bookMetadata']],
-      bookDownloader: BookDownloaderEnum.values[json['bookDownloader']],
-      wordDictionary: WordDictionaryEnum.values[json['wordDictionary']],
+      sortType: enumFromIndex(SortType.values, json['sortType']),
+      viewType: enumFromIndex(ViewType.values, json['viewType']),
+      bookMetadata:
+          enumFromIndex(BookMetadataEnum.values, json['bookMetadata']),
+      bookDownloader:
+          enumFromIndex(BookDownloaderEnum.values, json['bookDownloader']),
+      wordDictionary:
+          enumFromIndex(WordDictionaryEnum.values, json['wordDictionary']),
       wordsPerPage: json['wordsPerPage'] as double,
       themeMode: ThemeMode.values[json['themeMode']],
       translationFromLanguage:
