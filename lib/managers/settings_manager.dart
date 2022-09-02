@@ -25,6 +25,7 @@ class ConfigData {
   TranslateLanguage translationFromLanguage;
   TranslateLanguage translationToLanguage;
   Map<String, List<Character>> localCharacters;
+  bool dragPageAnimation;
 
   ConfigData({
     required this.sortType,
@@ -37,6 +38,7 @@ class ConfigData {
     required this.translationFromLanguage,
     required this.translationToLanguage,
     required this.localCharacters,
+    required this.dragPageAnimation,
   });
 
   factory ConfigData.fromJson(Map<String, dynamic> json) {
@@ -61,6 +63,7 @@ class ConfigData {
           value.map((e) => Character.fromJson(e)).cast<Character>().toList(),
         ),
       ),
+      dragPageAnimation: json['dragPageAnimation'] as bool? ?? true,
     );
   }
 
@@ -76,6 +79,7 @@ class ConfigData {
       'translationFromLanguage': translationFromLanguage.index,
       'translationToLanguage': translationToLanguage.index,
       'localCharacters': localCharacters,
+      'dragPageAnimation': dragPageAnimation,
     };
   }
 }
@@ -98,6 +102,7 @@ class SettingsManager {
     translationFromLanguage: TranslateLanguage.english,
     translationToLanguage: TranslateLanguage.english,
     localCharacters: {},
+    dragPageAnimation: true,
   );
 
   SettingsManager({

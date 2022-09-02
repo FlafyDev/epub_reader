@@ -61,9 +61,10 @@ class BookPlayerRenderer extends StatefulWidget {
     required this.onSelection,
     required this.server,
     required this.initialStyle,
+    required this.savedNotes,
     this.onSaveLocation,
     this.controllerCreated,
-    required this.savedNotes,
+    this.dragAnimation,
     this.onNotePressed,
   })  : maxPages = epubBook.Schema!.Package!.Spine!.Items!.length,
         super(key: key);
@@ -83,6 +84,7 @@ class BookPlayerRenderer extends StatefulWidget {
       onSaveLocation;
   final List<SavedNote> savedNotes;
   final void Function(SavedNote)? onNotePressed;
+  final bool? dragAnimation;
 
   @override
   _BookRendererState createState() => _BookRendererState();
@@ -342,8 +344,10 @@ class _BookRendererState extends State<BookPlayerRenderer>
               return;
             }
             final moved = details.globalPosition - startDraggingPosition;
-            progress.value =
-                _clampProgress(startDraggingProgress - moved.dx / 300);
+            if (widget.dragAnimation == true) {
+              progress.value =
+                  _clampProgress(startDraggingProgress - moved.dx / 300);
+            }
 
             // final rightRenderer = epubRenderers.firstWhere(
             //     (renderer) => renderer.id == (progress.value.round() + 2) % 3);

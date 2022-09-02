@@ -6,6 +6,7 @@ import 'package:epub_reader/providers/book_metadata/book_metadata.dart';
 import 'package:epub_reader/providers/word_dictionary/word_dictionary.dart';
 import 'package:epub_reader/widgets/clean_app_bar.dart';
 import 'package:epub_reader/widgets/confirm_popup.dart';
+import 'package:epub_reader/widgets/settings_switch.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
@@ -167,6 +168,16 @@ class _HomeSettingsState extends State<HomeSettings> {
                     });
                     await widget.settingsManager.saveConfig();
                     Phoenix.rebirth(context);
+                  },
+                ),
+                SettingsSwitch(
+                  settingName: "Drag page animation",
+                  value: widget.settingsManager.config.dragPageAnimation,
+                  onChanged: (value) {
+                    setState(() {
+                      widget.settingsManager.config.dragPageAnimation = value;
+                    });
+                    widget.settingsManager.saveConfig();
                   },
                 ),
                 TextButton(

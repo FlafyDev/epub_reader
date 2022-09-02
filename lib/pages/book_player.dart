@@ -277,6 +277,8 @@ class _BookPlayer extends State<BookPlayer>
                       children: [
                         BookPlayerRenderer(
                           savedNotes: widget.book.savedData!.data.notes,
+                          dragAnimation:
+                              widget.settingsManager.config.dragPageAnimation,
                           onNotePressed: (note) async {
                             final bool hasDesc = note.description.isNotEmpty;
                             final SavedNoteColor color = note.color;
