@@ -102,7 +102,7 @@ class _BookRendererState extends State<BookPlayerRenderer>
 
   final progress = ValueNotifier<double>(0);
   double startDraggingProgress = 0;
-  late Offset startDraggingPosition;
+  Offset draggingMoved = Offset.zero;
   bool canTransitionPages = false;
   bool dragging = false;
   late Tween<double> transitionTween;
@@ -329,7 +329,7 @@ class _BookRendererState extends State<BookPlayerRenderer>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          onHorizontalDragStart: (details) {
+          onPanStart: (details) {
             if (!canTransitionPages) {
               return;
             }
@@ -337,22 +337,20 @@ class _BookRendererState extends State<BookPlayerRenderer>
             dragging = true;
             canTransitionPages = false;
             startDraggingProgress = progress.value;
-            startDraggingPosition = details.globalPosition;
+            draggingMoved = Offset.zero;
           },
-          onHorizontalDragUpdate: (details) {
+          onPanUpdate: (details) {
             if (!dragging) {
               return;
             }
-            final moved = details.globalPosition - startDraggingPosition;
+            draggingMoved += details.delta;
             if (widget.dragAnimation == true) {
-              progress.value =
-                  _clampProgress(startDraggingProgress - moved.dx / 300);
+              double x = (-draggingMoved.dx / 392).clamp(-1, 1);
+              progress.value = _clampProgress(startDraggingProgress +
+                  Curves.easeIn.transform(x.abs()) * x.sign);
             }
-
-            // final rightRenderer = epubRenderers.firstWhere(
-            //     (renderer) => renderer.id == (progress.value.round() + 2) % 3);
           },
-          onHorizontalDragEnd: (details) {
+          onPanEnd: (details) {
             if (!dragging) {
               return;
             }
@@ -360,7 +358,7 @@ class _BookRendererState extends State<BookPlayerRenderer>
             final startValue = progress.value;
             double endValue;
 
-            if (details.velocity.pixelsPerSecond.dx.abs() > 60) {
+            if (details.velocity.pixelsPerSecond.dx.abs() > 30) {
               endValue = progress.value.roundToDouble() -
                   details.velocity.pixelsPerSecond.dx.sign;
             } else {
@@ -392,10 +390,16 @@ class _BookRendererState extends State<BookPlayerRenderer>
                   key: ValueKey(renderer.id),
                   valueListenable: progress,
                   builder: (context, value, child) {
-                    var location = ((renderer.id - value) % 3 - 1);
+                    double location = ((renderer.id - value) % 3 - 1);
+                    double xPos;
+                    if (location >= 0 && location <= 1) {
+                      xPos = 0;
+                    } else {
+                      xPos = location;
+                    }
+
                     return Positioned(
-                      left: (location >= 0 && location <= 1 ? 0 : location) *
-                          widget.width,
+                      left: xPos * widget.width,
                       child: SizedBox(
                         width: widget.width,
                         height: widget.height,
@@ -405,8 +409,9 @@ class _BookRendererState extends State<BookPlayerRenderer>
                               color: Colors.black,
                             ),
                             Opacity(
-                              opacity:
-                                  location > 0 && location <= 1 ? value % 1 : 1,
+                              opacity: location > 0 && location <= 1
+                                  ? max(0.1, value % 1)
+                                  : 1,
                               child: child!,
                             ),
                           ],
