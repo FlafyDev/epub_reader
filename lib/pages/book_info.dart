@@ -132,56 +132,52 @@ class _BookInfo extends State<BookInfo> {
                   ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
-              child: Expanded(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 70),
-                    Expanded(
-                      child: LayoutBuilder(builder: (context, constraints) {
-                        return SingleChildScrollView(
-                          child: Expanded(
-                            child: SizedBox(
-                              height: max(700, constraints.maxHeight),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  _Top(
-                                    book: widget.book,
-                                    book3dData: widget.book3dData,
-                                    previousBookData: widget.previousBookData,
-                                    wordsPerPage: widget.wordsPerPage,
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    width: size.width,
-                                    height: 80,
-                                    child:
-                                        MinimalBookInfoBar(book: widget.book),
-                                  ),
-                                  Expanded(
-                                    child: _Bottom(
-                                      book: widget.book,
-                                      onMainButtonPress: () {
-                                        if (widget.book.savedData == null) {
-                                          widget.onPressDownload!();
-                                        } else {
-                                          widget.onPressRead!();
-                                        }
-                                      },
-                                      onSecondaryButtonPress:
-                                          widget.onPressAddToShelf,
-                                    ),
-                                  ),
-                                ],
+              child: Column(
+                children: [
+                  const SizedBox(height: 70),
+                  Expanded(
+                    child: LayoutBuilder(builder: (context, constraints) {
+                      return SingleChildScrollView(
+                        child: SizedBox(
+                          height: max(700, constraints.maxHeight),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _Top(
+                                book: widget.book,
+                                book3dData: widget.book3dData,
+                                previousBookData: widget.previousBookData,
+                                wordsPerPage: widget.wordsPerPage,
                               ),
-                            ),
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 10),
+                                width: size.width,
+                                height: 80,
+                                child:
+                                    MinimalBookInfoBar(book: widget.book),
+                              ),
+                              Expanded(
+                                child: _Bottom(
+                                  book: widget.book,
+                                  onMainButtonPress: () {
+                                    if (widget.book.savedData == null) {
+                                      widget.onPressDownload!();
+                                    } else {
+                                      widget.onPressRead!();
+                                    }
+                                  },
+                                  onSecondaryButtonPress:
+                                      widget.onPressAddToShelf,
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      }),
-                    ),
-                  ],
-                ),
+                        ),
+                      );
+                    }),
+                  ),
+                ],
               ),
             ),
           ],
