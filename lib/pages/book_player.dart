@@ -77,6 +77,8 @@ class _BookPlayer extends State<BookPlayer>
   final lastReadLocations =
       stack.Stack<EpubLocation<int, EpubConsistentInnerNavigation>>();
   bool ignoreLastReadLocation = false;
+  late double pageWidth;
+  late double pageHeight;
 
   @override
   void initState() {
@@ -93,6 +95,10 @@ class _BookPlayer extends State<BookPlayer>
   }
 
   Future<void> initialize() async {
+    pageWidth =
+        MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width;
+    pageHeight =
+        MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.height;
     characterMetadata = await createCharacterMetadata(
       widget.book.savedData!.data.characterMetadata,
       localCharacters: widget.settingsManager.config.localCharacters,
@@ -276,6 +282,8 @@ class _BookPlayer extends State<BookPlayer>
                     child: Stack(
                       children: [
                         BookPlayerRenderer(
+                          width: pageWidth,
+                          height: pageHeight,
                           savedNotes: widget.book.savedData!.data.notes,
                           dragAnimation:
                               widget.settingsManager.config.dragPageAnimation,
@@ -319,8 +327,6 @@ class _BookPlayer extends State<BookPlayer>
                           },
                           onSaveLocation: onSaveLocation,
                           server: server!,
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
                           epubBook: epubBook!,
                           initialLocation:
                               widget.book.savedData!.data.consistentLocation,

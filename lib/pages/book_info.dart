@@ -7,8 +7,6 @@ import '../widgets/book_3d.dart';
 import '../widgets/book_3d_interactive.dart';
 import '../widgets/clean_app_bar.dart';
 
-double _easeInOut(num x) => -(cos(pi * x) - 1) / 2;
-
 PageRouteBuilder createBookInfoPageRoute(BookInfo bookInfo) {
   return PageRouteBuilder(
     reverseTransitionDuration: const Duration(milliseconds: 1000),
@@ -32,7 +30,7 @@ PageRouteBuilder createBookInfoPageRoute(BookInfo bookInfo) {
               );
           return FractionalTranslation(
             translation: Offset(
-              _easeInOut(x),
+              Curves.easeInOut.transform(x),
               0,
             ),
             child: child,
@@ -134,34 +132,56 @@ class _BookInfo extends State<BookInfo> {
                   ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  _Top(
-                    height: 300,
-                    book: widget.book,
-                    book3dData: widget.book3dData,
-                    previousBookData: widget.previousBookData,
-                    wordsPerPage: widget.wordsPerPage,
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    width: size.width,
-                    height: 80,
-                    child: MinimalBookInfoBar(book: widget.book),
-                  ),
-                  _Bottom(
-                    book: widget.book,
-                    onMainButtonPress: () {
-                      if (widget.book.savedData == null) {
-                        widget.onPressDownload!();
-                      } else {
-                        widget.onPressRead!();
-                      }
-                    },
-                    onSecondaryButtonPress: widget.onPressAddToShelf,
-                  ),
-                ],
+              child: Expanded(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 70),
+                    Expanded(
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        return SingleChildScrollView(
+                          child: Expanded(
+                            child: SizedBox(
+                              height: max(700, constraints.maxHeight),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  _Top(
+                                    book: widget.book,
+                                    book3dData: widget.book3dData,
+                                    previousBookData: widget.previousBookData,
+                                    wordsPerPage: widget.wordsPerPage,
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    width: size.width,
+                                    height: 80,
+                                    child:
+                                        MinimalBookInfoBar(book: widget.book),
+                                  ),
+                                  Expanded(
+                                    child: _Bottom(
+                                      book: widget.book,
+                                      onMainButtonPress: () {
+                                        if (widget.book.savedData == null) {
+                                          widget.onPressDownload!();
+                                        } else {
+                                          widget.onPressRead!();
+                                        }
+                                      },
+                                      onSecondaryButtonPress:
+                                          widget.onPressAddToShelf,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -214,113 +234,108 @@ class _BottomState extends State<_Bottom> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Expanded(
-      child: Container(
-        width: size.width,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(5),
-            topRight: Radius.circular(5),
-          ),
+    return Container(
+      width: size.width,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(5),
+          topRight: Radius.circular(5),
         ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 50,
-              child: TabBar(
-                controller: _tabController,
-                labelStyle: Theme.of(context).textTheme.titleSmall,
-                tabs: [
-                  if (showDescription) const Tab(text: 'Description'),
-                  if (showReviews) const Tab(text: 'Reviews'),
-                  if (showMarkers) const Tab(text: 'Markers'),
-                  if (showChapters) const Tab(text: 'Chapters'),
-                ],
-              ),
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 50,
+            child: TabBar(
+              controller: _tabController,
+              labelStyle: Theme.of(context).textTheme.titleSmall,
+              tabs: [
+                if (showDescription) const Tab(text: 'Description'),
+                if (showReviews) const Tab(text: 'Reviews'),
+                if (showMarkers) const Tab(text: 'Markers'),
+                if (showChapters) const Tab(text: 'Chapters'),
+              ],
             ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  if (showDescription)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(
-                        child: Text(
-                          widget.book.description!,
-                        ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                if (showDescription)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        widget.book.description!,
                       ),
                     ),
-                  if (showReviews) const Text('Reviews'),
-                  if (showMarkers) const Text("Markers"),
-                  if (showChapters)
-                    MediaQuery.removePadding(
-                      context: context,
-                      removeTop: true,
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        child: ListView.separated(
-                          itemBuilder: (_, i) {
-                            return Text(widget.book.chapters[i]);
-                          },
-                          separatorBuilder: (_, i) =>
-                              const SizedBox(height: 10),
-                          itemCount: widget.book.chapters.length,
-                        ),
+                  ),
+                if (showReviews) const Text('Reviews'),
+                if (showMarkers) const Text("Markers"),
+                if (showChapters)
+                  MediaQuery.removePadding(
+                    context: context,
+                    removeTop: true,
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      child: ListView.separated(
+                        itemBuilder: (_, i) {
+                          return Text(widget.book.chapters[i]);
+                        },
+                        separatorBuilder: (_, i) => const SizedBox(height: 10),
+                        itemCount: widget.book.chapters.length,
                       ),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  if (widget.onSecondaryButtonPress != null)
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 8,
-                        right: 0,
-                      ),
-                      child: TextButton(
-                        onPressed: widget.onSecondaryButtonPress!,
-                        child: const SizedBox(
-                          height: 64,
-                          width: 64,
-                          child: Icon(
-                            Icons.menu_book_rounded,
-                            size: 24,
-                          ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              children: [
+                if (widget.onSecondaryButtonPress != null)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8,
+                      right: 0,
+                    ),
+                    child: TextButton(
+                      onPressed: widget.onSecondaryButtonPress!,
+                      child: const SizedBox(
+                        height: 64,
+                        width: 64,
+                        child: Icon(
+                          Icons.menu_book_rounded,
+                          size: 24,
                         ),
                       ),
                     ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: TextButton(
-                        onPressed: widget.onMainButtonPress,
-                        child: SizedBox(
-                          height: 64,
-                          child: Center(
-                            child: Text(
-                              widget.book.savedData == null
-                                  ? "Download"
-                                  : "Read",
-                              style: const TextStyle(
-                                fontSize: 18,
-                              ),
+                  ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: TextButton(
+                      onPressed: widget.onMainButtonPress,
+                      child: SizedBox(
+                        height: 64,
+                        child: Center(
+                          child: Text(
+                            widget.book.savedData == null ? "Download" : "Read",
+                            style: const TextStyle(
+                              fontSize: 18,
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
-            )
-          ],
-        ),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
@@ -330,14 +345,12 @@ class _Top extends StatefulWidget {
   const _Top({
     Key? key,
     required this.book,
-    required this.height,
     required this.book3dData,
     this.previousBookData,
     required this.wordsPerPage,
   }) : super(key: key);
 
   final Book book;
-  final double height;
   final Book3DData book3dData;
   final BookInfoPreviousBookData? previousBookData;
   final double wordsPerPage;
@@ -387,7 +400,7 @@ class _TopState extends State<_Top> {
     return Stack(
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 200),
+          margin: const EdgeInsets.only(top: 170),
           width: size.width,
           height: 100,
           decoration: BoxDecoration(
@@ -464,8 +477,8 @@ class _TopState extends State<_Top> {
           ),
         ),
         Container(
-          padding: const EdgeInsets.only(left: 10, right: 10, top: 50),
-          height: widget.height,
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          height: 270,
           child: Row(
             children: [
               SizedBox(
@@ -530,7 +543,7 @@ class _TopState extends State<_Top> {
               const SizedBox(width: 12),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  padding: const EdgeInsets.symmetric(vertical: 80),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
