@@ -288,6 +288,7 @@ class BookSavedData {
           align: 'left',
           fontFamily: 'Default',
           fontPath: '',
+          theme: EpubStyleThemes.dark,
         ),
         progressSpine: 0,
         rating: null,

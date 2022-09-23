@@ -217,6 +217,35 @@ class _BookPlayerCustomizerState extends State<BookPlayerCustomizer> {
               ],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: Wrap(
+              runSpacing: 15,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _ScalerButton(
+                      child: Container(),
+                      backgroundColor: Colors.white,
+                      onPressed: () {
+                        widget.styleProperties.theme = EpubStyleThemes.light;
+                        widget.onUpdateStyle();
+                      },
+                    ),
+                    _ScalerButton(
+                      child: Container(),
+                      backgroundColor: Colors.black,
+                      onPressed: () {
+                        widget.styleProperties.theme = EpubStyleThemes.dark;
+                        widget.onUpdateStyle();
+                      },
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -271,10 +300,12 @@ class _ScalerButton extends StatelessWidget {
     Key? key,
     required this.child,
     required this.onPressed,
+    this.backgroundColor,
   }) : super(key: key);
 
   final Widget child;
   final void Function() onPressed;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -284,20 +315,22 @@ class _ScalerButton extends StatelessWidget {
         minHeight: 40.0,
       ),
       child: ElevatedButton(
-          onPressed: onPressed,
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-                Theme.of(context).dialogBackgroundColor),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
-                side: BorderSide(
-                  color: Theme.of(context).iconTheme.color!,
-                ),
+        onPressed: onPressed,
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(
+            backgroundColor ?? Theme.of(context).dialogBackgroundColor,
+          ),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+              side: BorderSide(
+                color: Theme.of(context).iconTheme.color!,
               ),
             ),
           ),
-          child: child),
+        ),
+        child: child,
+      ),
     );
   }
 }

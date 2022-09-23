@@ -48,6 +48,7 @@ dependencies:
   flutter_file_dialog: ^2.3.0
   font_awesome_flutter: ^10.1.0
   string_similarity: ^2.0.0
+  shake: ^2.1.0
 
 dev_dependencies:
   flutter_test:

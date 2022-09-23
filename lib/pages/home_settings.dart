@@ -180,6 +180,16 @@ class _HomeSettingsState extends State<HomeSettings> {
                     widget.settingsManager.saveConfig();
                   },
                 ),
+                SettingsSwitch(
+                  settingName: "Next page on shake",
+                  value: widget.settingsManager.config.nextPageOnShake,
+                  onChanged: (value) {
+                    setState(() {
+                      widget.settingsManager.config.nextPageOnShake = value;
+                    });
+                    widget.settingsManager.saveConfig();
+                  },
+                ),
                 TextButton(
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),

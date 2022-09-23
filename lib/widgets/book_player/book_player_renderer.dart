@@ -6,6 +6,7 @@ import 'package:epub_reader/widgets/epub_renderer/epub_server_files.dart';
 import 'package:epubz/epubz.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
+import 'package:shake/shake.dart';
 import '../../models/book_saved_data.dart';
 import '../epub_renderer/epub_renderer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -62,10 +63,12 @@ class BookPlayerRenderer extends StatefulWidget {
     required this.server,
     required this.initialStyle,
     required this.savedNotes,
+    required this.backgroundColor,
     this.onSaveLocation,
     this.controllerCreated,
     this.dragAnimation,
     this.onNotePressed,
+    this.nextPageOnShake,
   })  : maxPages = epubBook.Schema!.Package!.Spine!.Items!.length,
         super(key: key);
 
@@ -83,8 +86,10 @@ class BookPlayerRenderer extends StatefulWidget {
           EpubLocation<int, EpubConsistentInnerNavigation> epubLocation)?
       onSaveLocation;
   final List<SavedNote> savedNotes;
+  final Color backgroundColor;
   final void Function(SavedNote)? onNotePressed;
   final bool? dragAnimation;
+  final bool? nextPageOnShake;
 
   @override
   _BookRendererState createState() => _BookRendererState();
@@ -125,6 +130,12 @@ class _BookRendererState extends State<BookPlayerRenderer>
         curve: Curves.easeOut,
       ),
     );
+
+    if (widget.nextPageOnShake == true) {
+      ShakeDetector.autoStart(onPhoneShake: () {
+        animateToPage(offset: 1);
+      });
+    }
 
     filesProvider = EpubServerFiles(widget.epubBook);
 
@@ -178,6 +189,37 @@ class _BookRendererState extends State<BookPlayerRenderer>
         ),
       ));
     }
+  }
+
+  void animateToPage({
+    required double offset,
+    double? startValue,
+    bool? autoStartDraggingProgress,
+  }) {
+    if (!canTransitionPages) {
+      return;
+    }
+
+    double prog = progress.value;
+
+    clearSelection();
+    if (autoStartDraggingProgress != false) {
+      startDraggingProgress = prog.roundToDouble();
+    }
+    canTransitionPages = false;
+
+    animationController.reset();
+    transitionTween.begin = startValue ?? prog;
+    transitionTween.end =
+        _clampProgress(prog.roundToDouble() + offset);
+    // print("${transitionTween.begin} ${transitionTween.end}");
+    animationController.duration = Duration(
+      milliseconds:
+          (max((transitionTween.end! - transitionTween.begin!).abs(), 0.3) *
+                  300)
+              .round(),
+    );
+    animationController.forward();
   }
 
   String getPageFile(int page) {
@@ -329,7 +371,7 @@ class _BookRendererState extends State<BookPlayerRenderer>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          onPanStart: (details) {
+          onHorizontalDragStart: (details) {
             if (!canTransitionPages) {
               return;
             }
@@ -339,51 +381,40 @@ class _BookRendererState extends State<BookPlayerRenderer>
             startDraggingProgress = progress.value;
             draggingMoved = Offset.zero;
           },
-          onPanUpdate: (details) {
+          onHorizontalDragUpdate: (details) {
             if (!dragging) {
               return;
             }
             draggingMoved += details.delta;
             if (widget.dragAnimation == true) {
               double x = (-draggingMoved.dx / 392).clamp(-1, 1);
-              progress.value = _clampProgress(startDraggingProgress +
-                  Curves.easeIn.transform(x.abs()) * x.sign);
+              progress.value =
+                  _clampProgress(startDraggingProgress + (x.abs()) * x.sign);
             }
           },
-          onPanEnd: (details) {
+          onHorizontalDragEnd: (details) {
             if (!dragging) {
               return;
             }
             dragging = false;
-            final startValue = progress.value;
-            double endValue;
+            double offset = progress.value.roundToDouble() - startDraggingProgress;
+            double side = (progress.value - startDraggingProgress).sign;
 
             if (details.velocity.pixelsPerSecond.dx.abs() > 30) {
-              endValue = progress.value.roundToDouble() -
-                  details.velocity.pixelsPerSecond.dx.sign;
-            } else {
-              endValue = progress.value.roundToDouble();
+              offset = -details.velocity.pixelsPerSecond.dx.sign;
+              if (side != 0 && side != offset) offset = 0;
             }
 
-            endValue = _clampProgress(endValue);
-
-            if (endValue == progress.value) {
-              onDragAnimationEnd();
-            } else {
-              animationController.reset();
-              transitionTween.begin = startValue;
-              transitionTween.end = endValue;
-              animationController.duration = Duration(
-                milliseconds:
-                    (max((endValue - startValue).abs(), 0.3) * 500).round(),
-              );
-              animationController.forward();
-            }
+            canTransitionPages = true;
+            animateToPage(
+              offset: offset,
+              autoStartDraggingProgress: false,
+            );
           },
           child: Container(
             width: widget.width,
             height: widget.height,
-            color: Colors.black,
+            color: widget.backgroundColor,
             child: Stack(
               children: epubRenderers.map((renderer) {
                 return ValueListenableBuilder<double>(
@@ -406,7 +437,7 @@ class _BookRendererState extends State<BookPlayerRenderer>
                         child: Stack(
                           children: [
                             Container(
-                              color: Colors.black,
+                              color: widget.backgroundColor,
                             ),
                             Opacity(
                               opacity: location > 0 && location <= 1

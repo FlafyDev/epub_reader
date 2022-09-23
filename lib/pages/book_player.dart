@@ -228,10 +228,33 @@ class _BookPlayer extends State<BookPlayer>
     await widget.book.savedData!.saveData();
   }
 
+  void toggleBottomOptions() {
+    if (!showWordInfo) {
+      setState(() {
+        if (showCustomizer) {
+          closeCustomizer();
+        } else {
+          showBottomOptions = !showBottomOptions;
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (epubBook == null || server?.server == null) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    final Color backgroundColor;
+    
+    switch (widget.book.savedData!.data.styleProperties.theme) {
+      case EpubStyleThemes.light:
+        backgroundColor = Colors.white;
+        break;
+      case EpubStyleThemes.dark:
+        backgroundColor = Colors.black;
+        break;
     }
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -262,7 +285,7 @@ class _BookPlayer extends State<BookPlayer>
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          color: Colors.black,
+          color: backgroundColor,
           child: Stack(
             children: [
               // Book renderer
@@ -282,6 +305,8 @@ class _BookPlayer extends State<BookPlayer>
                     child: Stack(
                       children: [
                         BookPlayerRenderer(
+                          backgroundColor: backgroundColor,
+                          nextPageOnShake: widget.settingsManager.config.nextPageOnShake,
                           width: pageWidth,
                           height: pageHeight,
                           savedNotes: widget.book.savedData!.data.notes,
@@ -392,21 +417,10 @@ class _BookPlayer extends State<BookPlayer>
                   ),
                 ),
               ),
-
               GestureDetector(
-                onVerticalDragEnd: (details) {
-                  if (!showWordInfo) {
-                    setState(() {
-                      if (showCustomizer) {
-                        closeCustomizer();
-                      } else {
-                        showBottomOptions = (details.primaryVelocity ?? 0) < 0;
-                      }
-                    });
-                  }
-                },
+                onTap: showBottomOptions ? () => toggleBottomOptions() : null,
+                onLongPress: () => toggleBottomOptions(),
               ),
-              // Word info
               AnimatedPositioned(
                 curve: Curves.easeInOut,
                 duration: const Duration(milliseconds: 400),
@@ -418,7 +432,6 @@ class _BookPlayer extends State<BookPlayer>
                     const Spacer(),
                     if (showToolBar)
                       Container(
-                        color: Colors.black,
                         child: Container(
                           decoration: BoxDecoration(
                             color: Theme.of(context).primaryColor,
@@ -493,11 +506,11 @@ class _BookPlayer extends State<BookPlayer>
                     if (showToolBar)
                       Container(
                         height: 10,
-                        color: Colors.black,
+                        color: backgroundColor,
                       ),
                     Center(
                       child: Container(
-                        color: Colors.black,
+                        color: backgroundColor,
                         width: min(400, MediaQuery.of(context).size.width - 40),
                         height: 300,
                         child: IgnorePointer(

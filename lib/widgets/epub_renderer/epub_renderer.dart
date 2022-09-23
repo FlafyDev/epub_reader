@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:epub_reader/models/book_saved_data.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
+import 'package:epub_reader/utils/enum_from_index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -50,6 +49,11 @@ class EpubSelectionData {
   });
 }
 
+enum EpubStyleThemes {
+  light,
+  dark,
+}
+
 class EpubStyleProperties {
   EpubMargin margin;
   double fontSizeMultiplier;
@@ -60,6 +64,7 @@ class EpubStyleProperties {
   String align;
   String fontFamily;
   String fontPath;
+  EpubStyleThemes theme;
 
   EpubStyleProperties({
     required this.margin,
@@ -71,6 +76,7 @@ class EpubStyleProperties {
     required this.align,
     required this.fontFamily,
     required this.fontPath,
+    required this.theme,
   });
 
   EpubStyleProperties.fromJson(Map<String, dynamic> json)
@@ -82,7 +88,12 @@ class EpubStyleProperties {
         align = json['align'],
         fontFamily = json['fontFamily'],
         fontPath = json['fontPath'],
-        weightMultiplier = json['weightMultiplier'] ?? 1;
+        weightMultiplier = json['weightMultiplier'] ?? 1,
+        theme = enumFromIndex(
+          EpubStyleThemes.values,
+          json['theme'],
+          def: EpubStyleThemes.dark,
+        );
 
   Map<String, dynamic> toJson() {
     return {
@@ -95,6 +106,7 @@ class EpubStyleProperties {
       'fontFamily': fontFamily,
       'fontPath': fontPath,
       'weightMultiplier': weightMultiplier,
+      'theme': theme.index,
     };
   }
 }
@@ -121,6 +133,7 @@ class EpubRendererController {
     align: 'left',
     fontFamily: 'Arial',
     fontPath: '',
+    theme: EpubStyleThemes.dark,
   );
   EpubLocation<int, EpubConsistentInnerNavigation> consistentLocation =
       EpubLocation(
@@ -355,87 +368,87 @@ class _EpubRendererState extends State<EpubRenderer> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        InAppWebView(
-          // initialOptions: InAppWebViewGroupOptions(
-          //   android: AndroidInAppWebViewOptions(
-          //     useHybridComposition: true,
-          //   ),
-          // ),
-          gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-            Factory<TapGestureRecognizer>(
-              () {
-                return TapGestureRecognizer();
-              },
-            ),
-            Factory<LongPressGestureRecognizer>(
-              () {
-                return LongPressGestureRecognizer();
-              },
-            ),
-          },
-          onWebViewCreated: (controller) async {
-            webViewController = controller;
-            webViewController.addJavaScriptHandler(
-              handlerName: "load",
-              callback: onLoad,
-            );
-
-            webViewController.addJavaScriptHandler(
-              handlerName: "ready",
-              callback: onReady,
-            );
-
-            webViewController.addJavaScriptHandler(
-              handlerName: "notePress",
-              callback: (args) {
-                widget.onNotePressed(args[0] as String);
-              },
-            );
-
-            webViewController.addJavaScriptHandler(
-              handlerName: "link",
-              callback: (args) {
-                widget.onLinkPressed(args[0] as String);
-              },
-            );
-
-            webViewController.addJavaScriptHandler(
-              handlerName: "selection",
-              callback: (args) {
-                widget.onSelection(
-                  EpubSelectionData(
-                    text: args[0] as String,
-                    rangesData: (args[1] as List)
-                        .map(
-                          (rangeDataJson) =>
-                              SavedNoteRangeData.fromJson(rangeDataJson),
-                        )
-                        .toList(),
-                    rect: Rectangle(
-                      (args[2] as int).toDouble(),
-                      (args[3] as int).toDouble(),
-                      (args[4] as int).toDouble(),
-                      (args[5] as int).toDouble(),
-                    ),
-                  ),
-                );
-              },
-            );
-
-            controller.loadUrl(
-              urlRequest: URLRequest(
-                url: Uri.parse("http://localhost:8080"),
+        Opacity(
+          opacity: isReady ? 1 : 0,
+          child: InAppWebView(
+            initialOptions: InAppWebViewGroupOptions(
+              android: AndroidInAppWebViewOptions(
+                useHybridComposition: false,
               ),
-            );
-            // await controller.loadData(
-            //     data: await rootBundle.loadString(widget.htmlPath));
-          },
+            ),
+            // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+            //   Factory<TapGestureRecognizer>(
+            //     () {
+            //       return TapGestureRecognizer();
+            //     },
+            //   ),
+            //   Factory<LongPressGestureRecognizer>(
+            //     () {
+            //       return LongPressGestureRecognizer();
+            //     },
+            //   ),
+            // },
+            onWebViewCreated: (controller) async {
+              webViewController = controller;
+              webViewController.addJavaScriptHandler(
+                handlerName: "load",
+                callback: onLoad,
+              );
+
+              webViewController.addJavaScriptHandler(
+                handlerName: "ready",
+                callback: onReady,
+              );
+
+              webViewController.addJavaScriptHandler(
+                handlerName: "notePress",
+                callback: (args) {
+                  widget.onNotePressed(args[0] as String);
+                },
+              );
+
+              webViewController.addJavaScriptHandler(
+                handlerName: "link",
+                callback: (args) {
+                  widget.onLinkPressed(args[0] as String);
+                },
+              );
+
+              webViewController.addJavaScriptHandler(
+                handlerName: "selection",
+                callback: (args) {
+                  widget.onSelection(
+                    EpubSelectionData(
+                      text: args[0] as String,
+                      rangesData: (args[1] as List)
+                          .map(
+                            (rangeDataJson) =>
+                                SavedNoteRangeData.fromJson(rangeDataJson),
+                          )
+                          .toList(),
+                      rect: Rectangle(
+                        (args[2] as int).toDouble(),
+                        (args[3] as int).toDouble(),
+                        (args[4] as int).toDouble(),
+                        (args[5] as int).toDouble(),
+                      ),
+                    ),
+                  );
+                },
+              );
+
+              controller.loadUrl(
+                urlRequest: URLRequest(
+                  url: Uri.parse("http://localhost:8080"),
+                ),
+              );
+              // await controller.loadData(
+              //     data: await rootBundle.loadString(widget.htmlPath));
+            },
+          ),
         ),
         if (!isReady)
-          Container(
-            child: const Center(child: CircularProgressIndicator()),
-            color: Colors.black,
-          ),
+          const Center(child: CircularProgressIndicator()),
       ],
     );
   }
